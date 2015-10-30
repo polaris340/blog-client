@@ -7,27 +7,59 @@ var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var sh = require('shelljs');
 
+var ts = require('gulp-typescript');
+var watch = require('gulp-watch');
+
 var paths = {
-  sass: ['./scss/**/*.scss']
+  ionicSass: ['./scss-ionic/ionic.app.scss'],
+  sass: ['./src/**/*.scss'],
+  ts: ['./src/**/*.ts']
 };
 
 gulp.task('default', ['sass']);
 
 gulp.task('sass', function(done) {
-  gulp.src('./scss/ionic.app.scss')
-    .pipe(sass())
-    .on('error', sass.logError)
-    .pipe(gulp.dest('./www/css/'))
-    .pipe(minifyCss({
-      keepSpecialComments: 0
+  gulp.src(paths.sass)
+    .pipe(sass({
+      outputStyle: 'compressed'
     }))
-    .pipe(rename({ extname: '.min.css' }))
+    .on('error', sass.logError)
+    .pipe(concat('style.min.css'))
     .pipe(gulp.dest('./www/css/'))
     .on('end', done);
 });
 
-gulp.task('watch', function() {
-  gulp.watch(paths.sass, ['sass']);
+gulp.task('sass-ionic', function(done) {
+  gulp.src(paths.ionicSass)
+    .pipe(sass({
+      outputStyle: 'compressed'
+    }))
+    .on('error', sass.logError)
+    .pipe(concat('ionic.app.min.css'))
+    .pipe(gulp.dest('./www/css/'))
+    .on('end', done);
+});
+
+gulp.task('ts', function() {
+  return gulp.src(paths.ts)
+    .pipe(ts({
+      target: 'ES5',
+      out: 'app.js'
+    }))
+    .js
+    .pipe(gulp.dest('www/js'));
+});
+
+gulp.task('watch', ['sass', 'sass-ionic', 'ts'], function() {
+  watch(paths.sass, function() {
+    gulp.start('sass');
+  });
+  watch(paths.ionicSass, function() {
+    gulp.start('sass-ionic');
+  });
+  watch(paths.ts, function() {
+    gulp.start('ts');
+  });
 });
 
 gulp.task('install', ['git-check'], function() {

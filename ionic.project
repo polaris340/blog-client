@@ -1,4 +1,11 @@
 {
   "name": "blog",
-  "app_id": ""
+  "app_id": "",
+  "gulpStartupTasks": [
+    "watch"
+  ],
+  "watchPatterns": [
+    "www/**/*",
+    "!www/lib/**/*"
+  ]
 }

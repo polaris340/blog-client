@@ -1,0 +1,11 @@
+<ion-modal-view ng-controller="PostDetailController">
+  <ion-header-bar>
+    <button class="button button-clear icon ion-ios-arrow-down"
+      ng-click="$root.hideCurrentModal()"></button>
+    <h1 class="title">{{ post.title }}</h1>
+  </ion-header-bar>
+  <ion-content>
+
+    {{ post }}
+  </ion-content>
+</ion-modal-view>
